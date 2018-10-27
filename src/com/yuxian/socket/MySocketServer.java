@@ -2,6 +2,8 @@ package com.yuxian.socket;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * chat room server
@@ -13,6 +15,7 @@ public class MySocketServer extends Thread{
 	private int port;
 	private ServerSocket server;
 	private boolean isRunning = true;
+	private List<MyTunnel> all = new ArrayList<>();
 	
 	public MySocketServer(int p){
 		this.port = p;
@@ -28,14 +31,14 @@ public class MySocketServer extends Thread{
 		while(isRunning) {
 			try {
 				Socket client = server.accept();
-				Thread tunnel = new MyTunnel(client);
+				MyTunnel tunnel = new MyTunnel(client);
+				all.add(tunnel);
 				tunnel.start();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
 
 	}
 	
@@ -57,17 +60,26 @@ public class MySocketServer extends Thread{
 			} catch (IOException e) {
 				isRunning = false;
 				CloseUtil.closeAll(input,output);
+				all.remove(this);
 			}
 		}
 		
 		public void send(String msg) {
 			if(msg==null||msg.equals("")) return;
 			try {
-				output.writeUTF("your msg: "+msg);
+				output.writeUTF(msg);
 				output.flush();
 			} catch (IOException e) {
 				isRunning = false;
 				CloseUtil.closeAll(output);
+				all.remove(this);
+			}
+		}
+		
+		public void sendall(String msg) {
+			for(MyTunnel t : all) {
+				if(t==this) continue;
+				t.send("someone said: "+msg);
 			}
 		}
 		
@@ -78,13 +90,14 @@ public class MySocketServer extends Thread{
 			} catch (IOException e) {
 				isRunning = false;
 				CloseUtil.closeAll(input);
+				all.remove(this);
 			}
 			return "";
 		}
 		
 		public void run(){
 			while(isRunning) {
-				send(receive());
+				sendall(receive());
 			}
 		}
 	}
