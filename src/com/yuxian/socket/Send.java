@@ -42,8 +42,7 @@ public class Send extends Thread {
 		return "";
 	}
 	
-	public void send() {
-		String msg = getMsg();
+	public void send(String msg) {
 		try {
 			output.writeUTF(msg);
 			output.flush(); 
@@ -56,7 +55,7 @@ public class Send extends Thread {
 	
 	public void run(){
 		while(isRunning) {
-			send();
+			send(getMsg());
 		}
 	}
 }

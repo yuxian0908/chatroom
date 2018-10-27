@@ -52,15 +52,18 @@ public class MySocketServer extends Thread{
 		private DataInputStream input;
 		private DataOutputStream output;
 		private boolean isRunning = true;
+		public String name;
 		
 		public MyTunnel(Socket client) {
 			try {
 				input = new DataInputStream(client.getInputStream());
 				output = new DataOutputStream(client.getOutputStream());
+				name = input.readUTF();
+				systemlog(name+" joins");
 			} catch (IOException e) {
 				isRunning = false;
 				CloseUtil.closeAll(input,output);
-				all.remove(this);
+				leave();
 			}
 		}
 		
@@ -72,14 +75,36 @@ public class MySocketServer extends Thread{
 			} catch (IOException e) {
 				isRunning = false;
 				CloseUtil.closeAll(output);
-				all.remove(this);
+				leave();
 			}
 		}
 		
 		public void sendall(String msg) {
+			if(msg.startsWith("@")&&msg.indexOf(":")>-1) {
+				String someone = msg.substring(1,msg.indexOf(":"));
+				String content = msg.substring(msg.indexOf(":")+1);
+				sendto(someone, content);
+			}else {
+				sendothers(msg);
+			}
+		}
+		
+		public void sendto(String someone, String content) {
+			for(MyTunnel t : all) {
+				if(t.name.equals(someone)) t.send(this.name+ "told to you quietly: "+content);;
+			}
+		}
+		
+		public void sendothers(String msg) {
 			for(MyTunnel t : all) {
 				if(t==this) continue;
-				t.send("someone said: "+msg);
+				t.send(msg);
+			}
+		}
+		
+		public void systemlog(String msg) {
+			for(MyTunnel t : all) {
+				t.send("system: "+msg);
 			}
 		}
 		
@@ -90,9 +115,14 @@ public class MySocketServer extends Thread{
 			} catch (IOException e) {
 				isRunning = false;
 				CloseUtil.closeAll(input);
-				all.remove(this);
+				leave();
 			}
 			return "";
+		}
+		
+		public void leave() {
+			all.remove(this);
+			sendall(name+" leave...");
 		}
 		
 		public void run(){
