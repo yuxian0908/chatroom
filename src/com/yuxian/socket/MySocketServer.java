@@ -12,6 +12,7 @@ public class MySocketServer extends Thread{
 	
 	private int port;
 	private ServerSocket server;
+	private boolean isRunning = true;
 	
 	public MySocketServer(int p){
 		this.port = p;
@@ -25,14 +26,19 @@ public class MySocketServer extends Thread{
 	public void run() {
 		
 		Socket client;
-		
-		while(true) {
+		try {
+			client = server.accept();
+		} catch (IOException e1) {
+			isRunning = false;
+			client = null;
+		}
+		while(isRunning) {
 			try {
 				
 				// connect to client
-				synchronized(server) {
-					client = server.accept();
-				}
+//				synchronized(server) {
+//					client = server.accept();
+//				}
 				
 				// get input from client
 				System.out.println("socket established...");
@@ -42,7 +48,7 @@ public class MySocketServer extends Thread{
 				
 				// output msg to client
 				DataOutputStream output = new DataOutputStream(client.getOutputStream());
-				output.writeUTF("This is server");
+				output.writeUTF("your msg: "+data);
 				output.flush();
 				
 				

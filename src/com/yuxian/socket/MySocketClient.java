@@ -23,15 +23,11 @@ public class MySocketClient extends Thread{
 		try {
 			client.connect(isa, 10000);
 			
-			// output msg to server
-			DataOutputStream output = new DataOutputStream(client.getOutputStream());
-			output.writeUTF("This is client");
-			output.flush();
+			Thread send = new Send(client);
+			send.start(); 
 			
-			// get input from server
-			DataInputStream input = new DataInputStream(client.getInputStream());
-			String data = input.readUTF();
-			System.out.println("value: "+data);
+			Thread receive = new Receive(client);
+			receive.start(); 
 			
 			
 			// close socket
