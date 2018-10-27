@@ -3,6 +3,12 @@ package com.yuxian.socket;
 import java.io.*;
 import java.net.*;
 
+/**
+ * chat room client
+ * @author zhengyuhan
+ *
+ */
+
 public class MySocketClient extends Thread{
 	
 	private int port;
@@ -17,13 +23,20 @@ public class MySocketClient extends Thread{
 		try {
 			client.connect(isa, 10000);
 			
-			BufferedOutputStream output = new BufferedOutputStream(client.getOutputStream());
-			output.write("This is client".getBytes());
+			// output msg to server
+			DataOutputStream output = new DataOutputStream(client.getOutputStream());
+			output.writeUTF("This is client");
 			output.flush();
-			output.close();
-			output = null;
-			client.close();
-			client = null;
+			
+			// get input from server
+			DataInputStream input = new DataInputStream(client.getInputStream());
+			String data = input.readUTF();
+			System.out.println("value: "+data);
+			
+			
+			// close socket
+//			client.close();
+//			client = null;
 			
 		}catch(Exception e) {
 			e.getStackTrace();

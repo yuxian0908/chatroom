@@ -3,7 +3,11 @@ package com.yuxian.socket;
 import java.io.*;
 import java.net.*;
 
-//test socket chat server1
+/**
+ * chat room server
+ * @author zhengyuhan
+ *
+ */
 public class MySocketServer extends Thread{
 	
 	private int port;
@@ -21,25 +25,29 @@ public class MySocketServer extends Thread{
 	public void run() {
 		
 		Socket client;
-		BufferedInputStream input;
 		
 		while(true) {
 			try {
+				
+				// connect to client
 				synchronized(server) {
 					client = server.accept();
 				}
+				
+				// get input from client
 				System.out.println("socket established...");
-				input = new BufferedInputStream(client.getInputStream());
-				byte[] b = new byte[1024];
-				String data = "";
-				int length;
-				while((length=input.read(b))>0) {
-					data+=new String(b,0,length);
-				}
+				DataInputStream input = new DataInputStream(client.getInputStream());
+				String data = input.readUTF();
 				System.out.println("value: "+data);
-				input.close();
-				input = null;
-				client.close();
+				
+				// output msg to client
+				DataOutputStream output = new DataOutputStream(client.getOutputStream());
+				output.writeUTF("This is server");
+				output.flush();
+				
+				
+				// close socket
+//				client.close();
 				
 			}catch(IOException e) {
 				e.getStackTrace();
