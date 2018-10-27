@@ -25,45 +25,68 @@ public class MySocketServer extends Thread{
 	
 	public void run() {
 		
-		Socket client;
-		try {
-			client = server.accept();
-		} catch (IOException e1) {
-			isRunning = false;
-			client = null;
-		}
 		while(isRunning) {
 			try {
-				
-				// connect to client
-//				synchronized(server) {
-//					client = server.accept();
-//				}
-				
-				// get input from client
-				System.out.println("socket established...");
-				DataInputStream input = new DataInputStream(client.getInputStream());
-				String data = input.readUTF();
-				System.out.println("value: "+data);
-				
-				// output msg to client
-				DataOutputStream output = new DataOutputStream(client.getOutputStream());
-				output.writeUTF("your msg: "+data);
-				output.flush();
-				
-				
-				// close socket
-//				client.close();
-				
-			}catch(IOException e) {
-				e.getStackTrace();
+				Socket client = server.accept();
+				Thread tunnel = new MyTunnel(client);
+				tunnel.start();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
+		
+
 	}
 	
 	public static void main(String[] args) {
 		Thread t1 = new MySocketServer(8080);
 		t1.start();
+	}
+	
+	private class MyTunnel extends Thread{
+		
+		private DataInputStream input;
+		private DataOutputStream output;
+		private boolean isRunning = true;
+		
+		public MyTunnel(Socket client) {
+			try {
+				input = new DataInputStream(client.getInputStream());
+				output = new DataOutputStream(client.getOutputStream());
+			} catch (IOException e) {
+				isRunning = false;
+				CloseUtil.closeAll(input,output);
+			}
+		}
+		
+		public void send(String msg) {
+			if(msg==null||msg.equals("")) return;
+			try {
+				output.writeUTF("your msg: "+msg);
+				output.flush();
+			} catch (IOException e) {
+				isRunning = false;
+				CloseUtil.closeAll(output);
+			}
+		}
+		
+		public String receive() {
+			try {
+				String data = input.readUTF();
+				return data;
+			} catch (IOException e) {
+				isRunning = false;
+				CloseUtil.closeAll(input);
+			}
+			return "";
+		}
+		
+		public void run(){
+			while(isRunning) {
+				send(receive());
+			}
+		}
 	}
 	
 }
