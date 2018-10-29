@@ -6,4 +6,5 @@
  *
  */
 module YuxianSocket {
+	requires java.desktop;
 }

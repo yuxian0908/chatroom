@@ -39,10 +39,6 @@ public class MySocketClient extends Thread{
 			receive.start(); 
 			
 			
-			// close socket
-//			client.close();
-//			client = null;
-			
 		}catch(Exception e) {
 			e.getStackTrace();
 		}
