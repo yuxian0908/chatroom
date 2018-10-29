@@ -21,6 +21,8 @@ public class MySocketClient extends Thread{
 	private String addr;
 	Socket client;
 	private String name;
+	Send send;
+	Receive receive;
 	
 	public MySocketClient(String addr, int p) {
 		this.port = p;
@@ -28,26 +30,23 @@ public class MySocketClient extends Thread{
 		client = new Socket(); 
 		InetSocketAddress isa = new InetSocketAddress(addr,p);
 		try {
-			// get user name
-			System.out.println("type in your name: ");
-			BufferedReader nameInput = new BufferedReader(new InputStreamReader(System.in));
-			this.name = nameInput.readLine();
-			if(this.name.equals("")) return;
-			
-			
 			client.connect(isa, 10000);
-			
-			Send send = new Send(client);
-			send.send(this.name);
+
+			send = new Send(client);
 			send.start(); 
 			
-			Receive receive = new Receive(client);
+			receive = new Receive(client);
 			receive.start(); 
 			
 			
 		}catch(Exception e) {
 			e.getStackTrace();
 		}
+	}
+	
+	public void setUserName(String name) {
+		if(name.equals("")) return;
+		this.name = name;
 	}
 	
 	public void run() {

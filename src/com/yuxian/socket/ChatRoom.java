@@ -12,7 +12,7 @@ import javax.swing.JTextField;
 
 public class ChatRoom {
 	
-
+	private static MySocketClient client;
 	private static JTextArea textArea;
 	
 	public static void getText(String msg) {
@@ -52,6 +52,7 @@ public class ChatRoom {
             	String text = userText.getText();
                 textArea.append(text + newline);
                 userText.selectAll();
+            	client.send.send(text);
          
                 //Make sure the new text is visible, even if there
                 //was a selection in the text area.
@@ -60,11 +61,8 @@ public class ChatRoom {
         });
     }
 	
-	public static void main(String[] args) {
-		
-		Thread t1 = new MySocketClient("127.0.0.1",8080);
-		t1.start();
-		
+	public ChatRoom(MySocketClient cli) {
+		client = cli;
         JFrame frame = new JFrame("Login Example");
         frame.setSize(350, 200);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -76,5 +74,9 @@ public class ChatRoom {
 
         // set the frame to be visible
         frame.setVisible(true);
+	}
+	
+	public static void main(String[] args) {
+		
 	}
 }
