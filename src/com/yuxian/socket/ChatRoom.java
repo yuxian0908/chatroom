@@ -24,7 +24,7 @@ public class ChatRoom {
         panel.setLayout(null);
 
         //setBounds(x, y, width, height)
-        JLabel userLabel = new JLabel("User:");
+        JLabel userLabel = new JLabel("Message:");
         userLabel.setBounds(10,20,80,25);
         panel.add(userLabel);
 
@@ -63,7 +63,7 @@ public class ChatRoom {
 	
 	public ChatRoom(MySocketClient cli) {
 		client = cli;
-        JFrame frame = new JFrame("Login Example");
+        JFrame frame = new JFrame("Login Frame");
         frame.setSize(350, 200);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
