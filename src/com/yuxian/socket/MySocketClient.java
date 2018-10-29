@@ -47,6 +47,11 @@ public class MySocketClient extends Thread{
 	public void setUserName(String name) {
 		if(name.equals("")) return;
 		this.name = name;
+		System.out.println(this.name);
+	}
+	
+	public String getUserName() {
+		return this.name;
 	}
 	
 	public void run() {

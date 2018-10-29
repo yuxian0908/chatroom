@@ -36,12 +36,12 @@ public class ChatRoom {
         // area all message
         textArea = new JTextArea(30, 50);
         textArea.setEditable(false);
-        textArea.setBounds(100,100,200,50);
+        textArea.setBounds(100,100,500,200);
         panel.add(textArea);
 
         // submit button
         JButton submitButton = new JButton("submit");
-        submitButton.setBounds(10, 80, 80, 25);
+        submitButton.setBounds(300, 20, 80, 25);
         panel.add(submitButton);
         
         submitButton.addActionListener(new ActionListener() {
@@ -50,7 +50,7 @@ public class ChatRoom {
             public void actionPerformed(ActionEvent e) {
             	String newline = "\n";
             	String text = userText.getText();
-                textArea.append(text + newline);
+                textArea.append(client.getUserName() + ": " + text + newline);
                 userText.selectAll();
             	client.send.send(text);
          
@@ -64,7 +64,7 @@ public class ChatRoom {
 	public ChatRoom(MySocketClient cli) {
 		client = cli;
         JFrame frame = new JFrame("Login Frame");
-        frame.setSize(350, 200);
+        frame.setSize(700, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // add panel

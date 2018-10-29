@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 
 public class LoginFrame {
 	static MySocketClient client;
+	static JFrame frame;
 	
 	private static void placeComponents(JPanel panel) {
 
@@ -40,6 +41,7 @@ public class LoginFrame {
             	String name = userName.getText();
             	client.setUserName(name);
             	client.send.send(name);
+            	frame.dispose();
             	new ChatRoom(client);
             }
         });
@@ -50,8 +52,8 @@ public class LoginFrame {
 		client = new MySocketClient("127.0.0.1",8080);
 		client.start();
 		
-        JFrame frame = new JFrame("Login Example");
-        frame.setSize(350, 200);
+        frame = new JFrame("Login Example");
+        frame.setSize(350, 150);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // add panel

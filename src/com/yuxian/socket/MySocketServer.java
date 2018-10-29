@@ -70,7 +70,7 @@ public class MySocketServer extends Thread{
 		public void send(String msg) {
 			if(msg==null||msg.equals("")) return;
 			try {
-				output.writeUTF(msg);
+				output.writeUTF(msg+"\n");
 				output.flush();
 			} catch (IOException e) {
 				isRunning = false;
@@ -91,14 +91,14 @@ public class MySocketServer extends Thread{
 		
 		public void sendto(String someone, String content) {
 			for(MyTunnel t : all) {
-				if(t.name.equals(someone)) t.send(this.name+ "told to you quietly: "+content);;
+				if(t.name.equals(someone)) t.send(this.name+ " told to you quietly: "+content);;
 			}
 		}
 		
 		public void sendothers(String msg) {
 			for(MyTunnel t : all) {
 				if(t==this) continue;
-				t.send(msg);
+				t.send(this.name+": "+msg);
 			}
 		}
 		

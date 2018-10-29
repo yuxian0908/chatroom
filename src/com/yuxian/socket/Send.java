@@ -44,7 +44,7 @@ public class Send extends Thread {
 	
 	public void send(String msg) {
 		try {
-			output.writeUTF(msg+"\n");
+			output.writeUTF(msg);
 			output.flush(); 
 		} catch (IOException e) {
 			// if io exception happened, close all io
