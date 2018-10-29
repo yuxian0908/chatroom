@@ -3,6 +3,12 @@ package com.yuxian.socket;
 import java.io.*;
 import java.net.*;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+
 /**
  * chat room client
  * @author zhengyuhan
@@ -51,6 +57,5 @@ public class MySocketClient extends Thread{
 	public static void main(String[] args) {
 		Thread t1 = new MySocketClient("127.0.0.1",8080);
 		t1.start();
-		
 	}
 }

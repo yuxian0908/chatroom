@@ -36,7 +36,7 @@ public class Receive extends Thread {
 	
 	public void run() {
 		while(isRunning) {
-			System.out.println(receive());
+			ChatRoom.getText(receive());
 		}
 	}
 }
